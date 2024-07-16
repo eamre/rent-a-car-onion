@@ -1,4 +1,8 @@
-﻿using Core.Application.Rules;
+﻿using Core.Application.Pipelines.Caching;
+using Core.Application.Pipelines.Transaction;
+using Core.Application.Pipelines.Validation;
+using Core.Application.Rules;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -13,8 +17,18 @@ public static class ApplicationServiceRegistration
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+        services.AddMediatR(cfg => 
+        {
+            cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+            cfg.AddOpenBehavior(typeof(RequestValidationBehavior<,>));
+            cfg.AddOpenBehavior(typeof(TransactionScopeBehavior<,>));
+            cfg.AddOpenBehavior(typeof(CachingBehavior<,>));
+            cfg.AddOpenBehavior(typeof(CacheRemovingBehavior<,>));
+        });
+
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
         services.AddSubClassesOfType(Assembly.GetExecutingAssembly(), typeof(BaseBusinessRules));
 

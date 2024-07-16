@@ -15,6 +15,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices(builder.Configuration);
 
+//builder.Services.AddDistributedMemoryCache();
+builder.Services.AddStackExchangeRedisCache(options => options.Configuration="localhost:6379"); // For Redis
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
