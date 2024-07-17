@@ -1,7 +1,10 @@
 ﻿using Core.Application.Pipelines.Caching;
+using Core.Application.Pipelines.Logging;
 using Core.Application.Pipelines.Transaction;
 using Core.Application.Pipelines.Validation;
 using Core.Application.Rules;
+using Core.CrossCuttingConcerns.Serilog;
+using Core.CrossCuttingConcerns.Serilog.Logger;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -24,7 +27,10 @@ public static class ApplicationServiceRegistration
             cfg.AddOpenBehavior(typeof(TransactionScopeBehavior<,>));
             cfg.AddOpenBehavior(typeof(CachingBehavior<,>));
             cfg.AddOpenBehavior(typeof(CacheRemovingBehavior<,>));
+            cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
         });
+
+        services.AddSingleton<LoggerServiceBase, FileLogger>();
 
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
 

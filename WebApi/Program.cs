@@ -14,6 +14,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices(builder.Configuration);
+builder.Services.AddHttpContextAccessor();
 
 //builder.Services.AddDistributedMemoryCache();
 builder.Services.AddStackExchangeRedisCache(options => options.Configuration="localhost:6379"); // For Redis
@@ -27,7 +28,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-if(app.Environment.IsProduction())
+//if(app.Environment.IsProduction())
     app.ConfigureCustomExceptionMiddleware();
 
 app.UseHttpsRedirection();
