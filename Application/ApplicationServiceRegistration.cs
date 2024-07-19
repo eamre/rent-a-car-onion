@@ -7,6 +7,7 @@ using Core.CrossCuttingConcerns.Serilog;
 using Core.CrossCuttingConcerns.Serilog.Logger;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,8 +31,15 @@ public static class ApplicationServiceRegistration
             cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
         });
 
-        services.AddSingleton<LoggerServiceBase, FileLogger>();
+        services.AddSingleton<FileLogger>();
+        services.AddSingleton<MsSqlLogger>();
 
+        services.AddSingleton(sp =>
+        {
+            var fileLogger = sp.GetRequiredService<FileLogger>();
+            var msSqlLogger = sp.GetRequiredService<MsSqlLogger>();
+            return new LoggerServiceBase([fileLogger.Loggers[0], msSqlLogger.Loggers[0]]);
+        });
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
