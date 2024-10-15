@@ -1,6 +1,7 @@
 using System.Reflection;
 using Application;
 using Core.CrossCuttingConcerns.Exceptions.Extensions;
+using Core.Security;
 using Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices(builder.Configuration);
+builder.Services.AddSecurityServices();
 builder.Services.AddHttpContextAccessor();
 
 //builder.Services.AddDistributedMemoryCache();
